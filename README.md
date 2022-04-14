@@ -15,4 +15,4 @@ See .md for workflow.
 # Computing polygenic risk scores for breast and ovarian cancer
 Polygenic risk scores were computed for breast cancer and ovarian cancer in the UK Biobank cohort. GWAS summary statistics was downloaded from BCAC and OCAC.
 
-See .md for workflow.
+See PRS.md for workflow.
