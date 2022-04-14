@@ -98,7 +98,7 @@ write.table(oc_out,file="/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/o
 
 ```
 
-Individuals missing with missing disease information is coded as NA from R output. Changed NA values to -9 to fit plink fam file format. 
+Individuals missing with missing disease information is coded as NA after joining the two tables together. Changed NA values to -9 to fit plink fam file format.
 
 ```
 cat ukb41143.BC.tmp.fam | sed 's/NA/-9/´g > ukb41143.BC.fam
