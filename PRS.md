@@ -108,6 +108,6 @@ cat ukb41143.OC.tmp.fam | sed 's/NA/-9/´g > ukb41143.OC.fam
 ```
 
 # Running LDpred2
-Computed PRS for autosomal chromosomes.
+Plink files from UKB is separated by chromosome and therefore LDpred2 was computed for each chromosome separately. The combined results were then 
 
 
