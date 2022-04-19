@@ -110,72 +110,49 @@ cat ukb41143.OC.tmp.fam | sed 's/NA/-9/´g > ukb41143.OC.fam
 # Running LDpred2
 Plink files from UKB is separated by chromosome and therefore LDpred2 was computed for each chromosome separately. The combined results were then 
 
-Before running LDpred2-grid LD scores ..... Due to the time-limit of this project LD score could not be calculated using the dataset for this study, instead LD reference from HapMap3 was used. HapMap3 contain 1,054,330 variants based on 362,320 European individuals of the UK biobank.
+Due to the time-limit of this project LD scores could not be calculated using the dataset for this study, instead LD reference from HapMap3 was used. HapMap3 contain 1,054,330 variants based on 362,320 European individuals of the UK biobank. 
+
+To calculate the SNP correlation and LD score the script run.ldref.R was used. Ldpred2-grid was then run using the script beta_grid.R.
+
+The genetic load for each individual was calculated using the --score function in plink/1.90b4.9. This was done for all PRS models produced by LDpred2-grid. The output from beta_grid.R was concatenated with rsID for each variant and the alternate allele for the variant to use this as input for the allelic scoring.
 
 ```
 module load bioinfo-tools R_packages
 R
 
 library(bigsnpr)
-library(bigreadr)
-setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer") #remove /breast_cancer for OC analysis
+library(dplyr)
 
-## Information for the variants provided in the LD reference
-map_ldref <- readRDS("LD_ref/map.rds") #add breast_cancer/ for OC analysis
+setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer/") #/ovarian_cancer/ for OC 
+load("working.environment.ldref.RData")
+load("beta_grid.RData")
+plink_file <-{}
 
-## Breast cancer summary statistics
-sumstats <- bigreadr::fread2("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/gwas_sum/breast_cancer/BC_gwas_summary_filtered_UKB.txt") #ovarian_cancer/OC_gwas_summary_filtered_UKB.txt for OC
-sumstats$n_eff <- 4 / (1 / 122977 + 1 / 105974) #sumstats$n_eff <- 4 / (1 / 22406 + 1 / 40941) for OC
-
-#Matching variants between GWAS summary statistics and genotype data
-info_snp <- snp_match(sumstats, map_ldref)
-(info_snp <- tidyr::drop_na(tibble::as_tibble(info_snp)))
-
-sd_ldref <- with(info_snp, sqrt(2 * af_UKBB * (1 - af_UKBB)))
-sd_ss <- with(info_snp, 2 / sqrt(n_eff * beta_se^2))
-
-is_bad <-
-  sd_ss < (0.5 * sd_ldref) | sd_ss > (sd_ldref + 0.1) | sd_ss < 0.1 | sd_ldref < 0.05
-
-df_beta <- info_snp[!is_bad, ]
-
-#Create SNP correlation matrix
-tmp <- tempfile(tmpdir = "tmp-data")
-
-for (chr in 1:22) {
-  
-  cat(chr, ".. ", sep = "")
-  
-  ## indices in 'df_beta'
-  ind.chr <- which(df_beta$chr == chr)
-  ## indices in 'map_ldref'
-  ind.chr2 <- df_beta$`_NUM_ID_`[ind.chr]
-  ## indices in 'corr_chr'
-  ind.chr3 <- match(ind.chr2, which(map_ldref$chr == chr))
-  
-  corr_chr <- readRDS(paste0("LD_ref/LD_with_blocks_chr", chr, ".rds"))[ind.chr3, ind.chr3] #breast_cancer/LD_ref/LD_with_blocks_chr for OC
-  
-  if (chr == 1) {
-    corr <- as_SFBM(corr_chr, tmp)
-  } else {
-    corr$add_columns(corr_chr, nrow(corr))
-  }
+for (chr in 1:22){
+  obj.bigSNP <- snp_attach(paste0("/proj/sens2017538/nobackup/UKBB_IMP_DOSAGE_V3_bim_bed/chr", chr, ".rds")) #".OC.rds" for OC
+  ind_beta<-which(df_beta$rsid %in% obj.bigSNP$map$marker.ID)
+  ind_G<-which(obj.bigSNP$map$marker.ID %in% df_beta$rsid) #positions in G corresponding to positions in df_beta
+  df <- data.frame(obj.bigSNP$map$marker.ID[ind_G], obj.bigSNP$map$allele1[ind_G], beta_grid[ind_beta,])
+  colnames(df)[1:2]<-c("markerID", "a1") 
+  plink_file<-bind_rows(plink_file,df)
 }
 
-#Create LD matrix
-for (chr in 1:22) {
+write.table(plink_file, file="beta_grid.score",col.names=T, row.names=F,quote=F,sep=" ")
 
-  if (chr == 1) {
-    ld <- Matrix::colSums(corr_chr^2)
-    } else {
-      ld <- c(ld, Matrix::colSums(corr_chr^2))
-    }
-}
+```
+The allelic scoring with plink was run using the script plink.score.sh
 
-save.image("working.environment.ldref.RData")
+Since it took between 20-40h to run each script, ran them in parallell.
+
+```
+for score in {3..170}
+do
+
+sbatch --job-name=$score.plink.OC --output=$score.OC.out --export=score=$score plink.score.OC.sh
+
+done
 ```
 
-Ldpred2-grid was then run using the script beta_grid.R.
 
 # Finding best-fit PRS
 
