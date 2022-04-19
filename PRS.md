@@ -142,16 +142,18 @@ write.table(plink_file, file="beta_grid.score",col.names=T, row.names=F,quote=F,
 ```
 The allelic scoring with plink was run using the script plink.score.sh
 
-Since it took between 20-40h to run each script, ran them in parallell.
+Since it took between 20-40h to run each script, they were run in parallell.
 
 ```
 for score in {3..170}
 do
 
-sbatch --job-name=$score.plink.OC --output=$score.OC.out --export=score=$score plink.score.OC.sh
+sbatch --job-name=$score.plink --output=$score.out --export=score=$score plink.score.sh
 
 done
 ```
+
+
 
 
 # Finding best-fit PRS
