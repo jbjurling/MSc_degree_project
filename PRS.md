@@ -178,7 +178,7 @@ sbatch --job-name=$score.plink --output=$score.out --export=score=$score plink.s
 
 done
 ```
-The output files from allelic scoring with plink was merged so the score for all chromosomes for each PRS model was joined together. 
+The output files from allelic scoring with plink was merged to get the sum of scores across all chromosomes for each PRS model. 
 
 ```
 module load bioinfo-tools R_packages
