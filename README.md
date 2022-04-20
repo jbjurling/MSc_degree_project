@@ -7,7 +7,7 @@ Final report can be found at: "link to DIVA"
 
 
 # Rare loss of function variants in breast and ovarian cancer
-Identified loss-of-function (LoF) variants in genes that are investigated in the clinic and which are part of different gene panels. The LoF variant carriers were compared between cases and controls to find significant differences between the two groups. 
+Identified loss-of-function (LoF) variants in genes that are investigated in the clinic and which are part of different gene panels. The number of LoF variants were compared between cases and controls to find significant differences between the two groups. 
 
 See LoF.md for workflow.
 
