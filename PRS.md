@@ -152,8 +152,44 @@ sbatch --job-name=$score.plink --output=$score.out --export=score=$score plink.s
 
 done
 ```
+The output files from allelic scoring with plink was merged so the score for all chromosomes for each PRS model was joined together. 
 
+```
+module load bioinfo-tools R_packages
+R
 
+setwd("/castor/project/proj_nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer") #/ovarian_cancer for OC
+
+library(magrittr)
+library(data.table)
+library(dplyr)
+	
+get_folder <- function(folder) {
+	data <- list.files(path=folder, pattern=paste0("_", number, ".profile"), full.names=T) %>%
+        lapply(fread) %>%
+        rbindlist()
+	scores <- data[, .(score = sum (SCORESUM)), by=IID]
+	scores
+}
+
+#Loop over all models. 
+	#In same step standardise the score from each model and concatenate them all into one table.
+  output<-{}
+
+for (number in 3:170){
+score <- get_folder("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer/PRS_score") #/ovarian_cancer/PRS_score for OC
+if(number==3){colnames(score) <- c("IID", paste0("model_", number))
+score_st <- score %>% mutate_at(c(paste0("model_", number)), ~(scale(.) %>% as.vector)) #Standardize score
+output<-cbind(output,score_st)}
+else{score_sub <- subset(score, select=-c(IID))
+colnames(score_sub) <- c(paste0("model_", number))
+score_st <- score_sub %>% mutate_at(c(paste0("model_", number)), ~(scale(.) %>% as.vector))
+output <- cbind(output,score_st)}
+}
+
+save(output, file="PRS_score_table.RData")
+  
+```
 
 
 # Finding best-fit PRS
