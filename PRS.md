@@ -110,9 +110,9 @@ cat ukb41143.OC.tmp.fam | sed 's/NA/-9/´g > ukb41143.OC.fam
 # Running LDpred2
 Plink files from UKB is separated by chromosome and therefore LDpred2 was computed for each chromosome separately. The combined results were then 
 
-Due to the time-limit of this project LD scores could not be calculated using the dataset for this study, instead LD reference from HapMap3 was used. HapMap3 contain 1,054,330 variants based on 362,320 European individuals of the UK biobank. 
+Due to the time-limit of this project LD matrices could not be calculated using the dataset for this study, instead LD reference from HapMap3 was used. HapMap3 contain 1,054,330 variants based on 362,320 European individuals of the UK biobank. 
 
-To calculate the SNP correlation and LD score the script run.ldref.R was used. Ldpred2-grid was then run using the script beta_grid.R.
+To calculate the SNP correlation get LD matrices the script run.ldref.R was used. Ldpred2-grid was then run using the script beta_grid.R.
 
 The genetic load for each individual was calculated using the --score function in plink/1.90b4.9. This was done for all PRS models produced by LDpred2-grid. The output from beta_grid.R was concatenated with rsID for each variant and the alternate allele for the variant to use this as input for the allelic scoring.
 
