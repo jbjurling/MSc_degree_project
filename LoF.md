@@ -12,5 +12,5 @@ The frecuency of these variants in the cases and controls were determined.
 
 # Annotation of WES data
 
-The plink files containing WES data for 200K individuals from UKB were converted to VCF files to be used as input for annotation using VEP. To save space in the project directory genotype information from the WES data was filtered out in the same step. The script plink2vcf.sh was used for this.
+The plink files containing WES data for 200K individuals from UKB were converted to VCF files to be used as input for VEP annotation. To save space in the project directory genotype information from the WES data was filtered out in the same step. The script plink2vcf.sh was used for this. The next step was to 
 
