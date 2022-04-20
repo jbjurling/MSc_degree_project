@@ -108,11 +108,37 @@ cat ukb41143.OC.tmp.fam | sed 's/NA/-9/´g > ukb41143.OC.fam
 ```
 
 # Running LDpred2
-Plink files from UKB is separated by chromosome and therefore LDpred2 was computed for each chromosome separately. The combined results were then 
+Plink files from UKB is separated by chromosome and therefore LDpred2 was computed for each chromosome separately. The combined results were then combined before evaluating the best-fit PRS model. 
 
-Due to the time-limit of this project LD matrices could not be calculated using the dataset for this study, instead LD reference from HapMap3 was used. HapMap3 contain 1,054,330 variants based on 362,320 European individuals of the UK biobank. 
+The dataset, comprising 263,313 females from the UKB, were split into three cohorts. The validation and testing cohort is used in this analysis. The validation cohort contain approximately 10% of the individuals from the dataset. An additional cohort, intended to be used as LD reference, was also created but due to the time-limit of this project LD references from HapMap3 was instead used.
 
-To calculate the SNP correlation get LD matrices the script run.ldref.R was used. Ldpred2-grid was then run using the script beta_grid.R.
+``` 
+module load bioinfo-tools R_packages
+R
+
+library(bigsnpr)
+
+# Attach the "bigSNP" object in R session
+obj.bigSNP <- snp_attach("/proj/sens2017538/nobackup/UKBB_IMP_DOSAGE_V3_bim_bed/chr1.rds")
+# Get aliases for useful slots
+G <- obj.bigSNP$genotypes
+
+#Split cohort (for correlation and ld calculations want the Caucasian non related individuals since we have Caucasian GWAS data.)
+setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/")
+load("/proj/sens2017538/nobackup/UKBB_41143_Data/All.Phenos.20210212.IDs_to_indlude_NonRelCauc.RData")
+ind.females <- which(obj.bigSNP$fam$sample.ID %in% temp$f.eid[temp$f.31.0.0==0])
+ind.sample <- sample(ind.females, 1000) 
+cohort <- setdiff(rows_along(G), ind.sample)
+ind.val <- sample(cohort, 26430) 
+ind.test <- setdiff(cohort, ind.val)
+
+save(ind.sample,file="ldscore_cohort.RData")
+save(ind.val,file="validation_cohort.RData")
+save(ind.test,file="test_cohort.RData")
+```
+Plink files containing genotype information from UKB was loaded to R and saved as ".rds" files. The output ".rds" files were filtered to only include genotypes from the participants for this study (487,409 individuals) and SNPs present in the GWAS summary statistics files from BCAC and OCAC. The script makeRDS.R was used for this step. 
+
+HapMap3 containing 1,054,330 variants based on 362,320 European individuals of the UK biobank was used to get SNP and LD matrices (see run.ldref.R). Ldpred2-grid was then run using the script beta_grid.R.
 
 The genetic load for each individual was calculated using the --score function in plink/1.90b4.9. This was done for all PRS models produced by LDpred2-grid. The output from beta_grid.R was concatenated with rsID for each variant and the alternate allele for the variant to use this as input for the allelic scoring.
 
