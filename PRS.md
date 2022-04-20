@@ -218,7 +218,4 @@ save(output, file="PRS_score_table.RData")
 ```
 
 
-# Finding best-fit PRS
-
-# Running PRS with test dataset
-
+# Finding and validating best-fit PRS
