@@ -7,9 +7,9 @@ Final report can be found at: "link to DIVA"
 
 
 # Rare loss of function variants in breast and ovarian cancer
-Identified loss-of-function (LoF) variants in genes that are investigated in the clinic and which are part of different gene panels. These variants were annotated using whole exome sequencing data from 200K individuals in UK Biobank. The LoF variant carriers were compared between cases and controls to find significant differences between the two groups. 
+Identified loss-of-function (LoF) variants in genes that are investigated in the clinic and which are part of different gene panels. The LoF variant carriers were compared between cases and controls to find significant differences between the two groups. 
 
-See .md for workflow.
+See LoF.md for workflow.
 
 
 # Computing polygenic risk scores for breast and ovarian cancer
