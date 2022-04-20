@@ -12,7 +12,7 @@ Breast cancer: BCAC - https://bcac.ccge.medschl.cam.ac.uk/
 
 Ovarian cancer: OCAC - https://www.ebi.ac.uk/gwas/studies/GCST004417
 
-The downloaded summary statistics files were rearranged to be used as input for LDpred2. Column order: temporary variant name (var_name), chromosome number (chr), genetic position (pos), reference allele (a0), alternate allele (a1), effect size estimate (beta), standard error of beta (beta_se), p-value for effect estimate (p). The temporary variant name (var_name) is the location of the SNP, so which chromosome it is present on and at which position.
+The downloaded summary statistics files were rearranged to be used as input for LDpred2. Column order: temporary variant name (var_name), chromosome number (chr), genetic position (pos), non-effect allele (a0), effect allele (a1), effect size estimate (beta), standard error of beta (beta_se), p-value for effect estimate (p), and effect allele frequency (here named maf). The temporary variant name (var_name) is the location of the SNP, so which chromosome it is present on and at which position.
 
 
 ```
