@@ -136,7 +136,7 @@ save(ind.sample,file="ldscore_cohort.RData")
 save(ind.val,file="validation_cohort.RData")
 save(ind.test,file="test_cohort.RData")
 ```
-Plink files containing genotype information from UKB was loaded to R and saved as ".rds" files. The output ".rds" files were filtered to only include genotypes from the participants for this study (487,409 individuals) and SNPs present in the GWAS summary statistics files from BCAC and OCAC. The script makeRDS.R was used for this step. 
+Plink files containing genotype information from UKB was loaded to R and saved as ".rds" files. Filtering was made so the ".rds" files only contained genotypes from the participants for this study (487,409 individuals) and SNPs present in the GWAS summary statistics files from BCAC and OCAC. The script makeRDS.R was used for this step. 
 
 HapMap3 containing 1,054,330 variants based on 362,320 European individuals of the UK biobank was used to get SNP and LD matrices (see run.ldref.R). Ldpred2-grid was then run using the script beta_grid.R.
 
