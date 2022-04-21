@@ -31,4 +31,4 @@ BC_table<-data.frame(id, sex, age, yob, BC, BC_age)
 #Genotypes for each individual at each variant position:
 BC_variants <- read.table("BC_variants.raw", header=T, stringsAsFactors=F, sep="")
 BC_full <- merge(BC_table,BC_variants,by.x="id",by.y="IID")
-write.table(BC_full,"BC_variants_status.RData",col.names=T,row.names=F,quote=F,sep=" ")
+write.table(BC_full,"BC_variants_status.RData",col.names=T,row.names=F,sep="\t")
