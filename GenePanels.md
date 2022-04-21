@@ -12,18 +12,48 @@ The plink files containing WES data for 200K individuals from UKB were converted
 The VEP output files were filtered to only include variants found in genes that have known association with breast and ovarian cancer (filterVEP.sh). The filtered files were then used as input for filtering the WES plink files from UKB to only contain genotypes for these variants (filterPLINK.sh).
 
 # Extracting phenotype information from UKB
-To determine the case/control status for statistical testing, disease status was extracted from phenotype files from UKB. Script to extract disease information was provided by Åsa Johansson. 
+To determine the case/control status for statistical testing, disease status was extracted from phenotype files from UKB. This was done using case_control_status.R 
 
-
-To get genotype information for 
+Scripts to extract disease information and age of onset was provided by Åsa Johansson. 
 
 # Statistical testing
 To explore if there are significant differences between cases and controls ran two-sample t-test using the t.test function in R/4.1.1. This was done for all variants in the gene panel, variants per gene from the gene panel and each variants separately. 
 
+T-test for full set of variants:
+```
+module load bioinfo-tools R_packages
+R
 
+setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis")
+
+#Load genotype data
+BC_full<-read.table("BC_variants_status.RData") #OC_variants_status.RData for OC
+
+#Added column with case/control status and removed first 11 columns to get table to use for two sample t-test.
+BC_full$status <- rep("control",nrow(BC_full))
+BC_cases<-rownames(BC_full[BC_full$BC==1,])
+BC_full[BC_cases,]$status="case"
+BC_ttest<-BC_full[-c(1:11)]
+ 
+#Get sum of variants per individual
+BC_case_table<-subset(BC_ttest, status=="case")
+BC_case_table$ind_sum<-rowSums(BC_case_table=="2"|BC_case_table=="1",na.rm=T)
+BC_control_table<-subset(BC_ttest, status=="control")
+BC_control_table$ind_sum<-rowSums(BC_case_table=="2"|BC_case_table=="1",na.rm=T)
+
+#t.test between cases and controls (sum of variants per individual):
+case<-BC_case_table$ind_sum
+control<-BC_control_table$ind_sum
+ttest<-t.test(case,control)
+```
+Extractted genotype data per gene using plink_genes.sh and then ran t-test per gene to see if specific genes in the gene panels gave the significant differences.
 
 ```
 
 ```
 
+T-test per variant:
+```
+
+```
 
