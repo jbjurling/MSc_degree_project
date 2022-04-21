@@ -17,6 +17,6 @@ jobs:
 
       - uses: r-lib/actions/setup-r@v1
 
-      - name: Run the script :-)
-        run: Rscript r_script.R
+      - name: Run the script
+        run: Rscript -e 'message("Hello :-)")'
 

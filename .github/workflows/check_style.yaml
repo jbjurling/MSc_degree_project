@@ -18,10 +18,8 @@ jobs:
       - uses: r-lib/actions/setup-r@v1
 
       - name: Install dependencies
-        run: |
-          install.packages("lintr")
-        shell: Rscript {0}
+        run: Rscript -e 'install.packages("lintr")'
 
       - name: Check for style
-        run: Rscript -e 'lintr::lint("r_script.R")'
+        run: Rscript -e 'lintr::lint_dir(".")'
 
