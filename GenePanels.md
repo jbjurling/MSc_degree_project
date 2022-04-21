@@ -12,27 +12,10 @@ The plink files containing WES data for 200K individuals from UKB were converted
 The VEP output files were filtered to only include variants found in genes that have known association with breast and ovarian cancer (filterVEP.sh). The filtered files were then used as input for filtering the WES plink files from UKB to only contain genotypes for these variants (filterPLINK.sh).
 
 # Extracting phenotype information from UKB
-To determine the case/control status for statistical testing, disease status was extracted from phenotype files from UKB. 
-
-```
-module load bioinfo-tools R_packages
-R
-
-#Load phenotype data
-setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/")
-load("/proj/sens2017538/nobackup/UKBB_41143_Data/All.Phenos.20210212.RData")
-
-#Creating variables of interest:
-id<-phenos$f.eid
-sex<-phenos$f.31.0.0
-age<-phenos$f.21003.0.0 #age at recruitment
-yob<-phenos$f.34.0.0   #year of birth
-
-#Get BC/OC case status and age of diagnosis:
+To determine the case/control status for statistical testing, disease status was extracted from phenotype files from UKB. Script to extract disease information was provided by Åsa Johansson. 
 
 
-```
-
+To get genotype information for 
 
 # Statistical testing
 To explore if there are significant differences between cases and controls ran two-sample t-test using the t.test function in R/4.1.1. This was done for all variants in the gene panel, variants per gene from the gene panel and each variants separately. 
