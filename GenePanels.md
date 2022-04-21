@@ -46,10 +46,32 @@ case<-BC_case_table$ind_sum
 control<-BC_control_table$ind_sum
 ttest<-t.test(case,control)
 ```
-Extractted genotype data per gene using plink_genes.sh and then ran t-test per gene to see if specific genes in the gene panels gave the significant differences.
+Extractted genotype data per gene using plink_genes.sh and then ran t-test per gene to see if specific genes in the gene panels gave the significant differences between cases and controls.
 
 ```
+module load bioinfo-tools R_packages
+R
 
+setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/ttest")
+list<-read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/BC_genes.txt",header=F) #OC_genes for OC analysis
+BC_table <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/BC_variants_status.RData", header=T,stringsAsFactors=F,sep="\t") #OC_variants_status.RData for OC analysis
+BC_status<-data.frame(BC_table$id,BC_table$status)
+
+for (name in list[,1]){
+gene <- read.table(/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/plink_files/genes/paste0(name,"_BC.raw"), header = T, stringsAsFactors = F, sep="")
+gene_table<-merge(gene,BC_status,by.x="FID",by.y="BC_table.id")
+gene_for_test<-gene_table[-c(1:6)]
+gene_case<-subset(gene_for_test,BC_table.status=="case")
+gene_control<-subset(gene_for_test,BC_table.status=="control")
+gene_case$sum_variants<-rowSums(gene_case=="2"|gene_case=="1",na.rm=T)
+gene_control$sum_variants<-rowSums(gene_control=="2"|gene_control=="1",na.rm=T)
+case<-gene_case$sum_variants
+control<-gene_control$sum_variants
+ttest<-t.test(case,control)
+sink(paste0(name,"_BC_ttest.log"))
+print(ttest)
+sink()
+}
 ```
 
 T-test per variant:
