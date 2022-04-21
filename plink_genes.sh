@@ -1,6 +1,7 @@
 #!/bin/bash -l
 #
 # Script to get raw data per gene for ttest in R. 
+# Change BC to OC for ovarian cancer analysis
 
 while read line
 do
