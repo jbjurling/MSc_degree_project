@@ -49,6 +49,9 @@ ttest<-t.test(case,control)
 
 Gene panel from the National Board of Health and Welfare:
 ```
+module load bioinfo-tools R_packages
+R
+
 setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/ttest")
 list<-read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/BC_SOCgenes.txt",header=F)
 BC_table <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/BC_variants_status.RData", header=T,stringsAsFactors=F,sep="\t")
@@ -65,10 +68,15 @@ gene_control$sum_variants<-rowSums(gene_control=="2"|gene_control=="1",na.rm=T)
 case<-gene_case$sum_variants
 control<-gene_control$sum_variants
 ttest<-t.test(case,control)
-sink(paste0(name,"_BC_ttest.log"))
+sink(paste0(name,"_SOC_ttest.log"))
 print(ttest)
 sink()
 }
+
+q()
+
+cat *SOC_ttest.log > socialstyrelsen_BC_genes.txt
+rm *SOC_ttest.log
 ```
 
 Extractted genotype data per gene using plink_genes.sh and then ran t-test per gene to see if specific genes in the gene panels gave the significant differences between cases and controls.
