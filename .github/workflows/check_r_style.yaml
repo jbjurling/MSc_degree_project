@@ -2,10 +2,10 @@ on:
   push:
   pull_request:
 
-name: check_style
+name: check_r_style
 
 jobs:
-  check_style:
+  check_r_style:
 
     runs-on: ubuntu-latest
 
@@ -25,10 +25,4 @@ jobs:
 
       - name: Check for style
         run: Rscript -e 'lintr::lint_dir(".")'
-
-      - name: Install shellcheck
-        run: sudo apt install shellcheck
-
-      - name: Run shellcheck
-        run: shellcheck *.sh
 
