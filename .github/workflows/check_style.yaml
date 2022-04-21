@@ -23,3 +23,9 @@ jobs:
       - name: Check for style
         run: Rscript -e 'lintr::lint_dir(".")'
 
+      - name: Install shellcheck
+        run: sudo apt install shellcheck
+
+      - name: Run shellcheck
+        run: shellcheck *.sh
+
