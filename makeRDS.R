@@ -6,13 +6,13 @@ library(bigassertr)
   #The corresponding ".bim" and ".fam" needs to be in the same directory.
  
 #Create variable for individual IDs to include (only females)
-famfile<-read.table("ukb41143.fam",header=F)
-colnames(famfile)<-c("FID","IID","p","m","sex","pheno")
-ID<-famfile$FID[famfile$sex==2] 
+famfile <- read.table("ukb41143.fam", header=F)
+colnames(famfile) <- c("FID", "IID", "p", "m", "sex", "pheno")
+ID <- famfile$FID[famfile$sex == 2] 
 
 #Create variable for SNPs to include (used GWAS summary files only filtered for maf>0.01)
-snps<-read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/gwas_sum/breast_cancer/BC_gwas_summary.txt",header=T,sep=",") #../ovarian_cancer/OC_gwas_summary_filtered_maf001.txt for OC
-SNPnames<-snps$var_name
+snps <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/gwas_sum/breast_cancer/BC_gwas_summary.txt",header=T,sep=",") #../ovarian_cancer/OC_gwas_summary_filtered_maf001.txt for OC
+SNPnames <- snps$var_name
 
 ##Function to read plink files to a bigSNP array
 JB_snp_readBed <- function(bedfile) {
@@ -21,7 +21,7 @@ JB_snp_readBed <- function(bedfile) {
   obj.bed <- bed(bedfile)
   
   # Check if backingfile already exists 
-  backingfile<-sub_bed(bedfile) #add ".OC" for OC
+  backingfile <- sub_bed(bedfile) #add ".OC" for OC
   assert_noexist(paste0(backingfile, ".bk"))
   
   # Get other files
@@ -29,15 +29,15 @@ JB_snp_readBed <- function(bedfile) {
   bim <- obj.bed$map; rownames(bim) <- rows_along(bim)
   
   # Create variable in bim to match against SNPnames
-  bim$var_name<-paste(bim$chromosome,bim$physical.pos,sep="_")
+  bim$var_name <- paste(bim$chromosome, bim$physical.pos, sep="_")
   
   # Create index for individuals and SNPs to load (SNPs for all chr in same variable)
-  ind.row<-which(fam$sample.ID %in% ID)
-  ind.col<-which(bim$var_name %in% SNPnames)
+  ind.row <- which(fam$sample.ID %in% ID)
+  ind.col <- which(bim$var_name %in% SNPnames)
   
   #Include only individuals and SNPs in fam/bim files
-  fam<-fam[ind.row, ]
-  bim<-bim[ind.col,]
+  fam <- fam[ind.row, ]
+  bim <- bim[ind.col, ]
   
   # Prepare Filebacked Big Matrix
   bigGeno <- FBM.code256(
@@ -65,8 +65,8 @@ JB_snp_readBed <- function(bedfile) {
 }
 
 ##Command to run function for all chromosomes
-list<-read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/chr_v2.txt")
+list <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/chr_v2.txt")
 
 for (chr in list[,1]){
-  JB_snp_readBed(paste0(chr,".bed"))
+  JB_snp_readBed(paste0(chr, ".bed"))
 }
