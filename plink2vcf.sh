@@ -1,5 +1,3 @@
-# plink2vcf.sh
-
 #!/bin/bash -l
 #
 # Script to create vcf files from plink .bim .bed .fam files
