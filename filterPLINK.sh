@@ -1,5 +1,3 @@
-# filterPLINK.sh
-
 #!/bin/bash -l
 #
 # Script to filter out genotypes for variants in genes from genepanel
