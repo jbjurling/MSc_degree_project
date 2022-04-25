@@ -14,7 +14,7 @@ The VEP output files were filtered to only include variants found in genes that 
 # Extracting phenotype information from UKB
 To determine the case/control status for statistical testing, disease status was extracted from phenotype files from UKB. This was done using case_control_status.R 
 
-Scripts to extract disease information and age of onset was provided by @AasaJohanssonUU 
+Scripts to extract disease information and age of onset was provided by [@AasaJohanssonUU](https://github.com/AasaJohanssonUU) 
 
 # Statistical testing
 To explore if there are significant differences between cases and controls ran two-sample t-test using the t.test function in R/4.1.1. This was done for all variants in the gene panel, variants in gene panel from the Swedish National Board of Healt and Welfare, variants per gene from the full gene panel and each variants separately. 
@@ -27,24 +27,24 @@ R
 setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis")
 
 #Load genotype data
-BC_full<-read.table("BC_variants_status.RData") #OC_variants_status.RData for OC
+BC_full <- read.table("BC_variants_status.RData") #OC_variants_status.RData for OC
 
 #Added column with case/control status and removed first 11 columns to get table to use for two sample t-test.
-BC_full$status <- rep("control",nrow(BC_full))
-BC_cases<-rownames(BC_full[BC_full$BC==1,])
+BC_full$status <- rep("control", nrow(BC_full))
+BC_cases <- rownames(BC_full[BC_full$BC == 1,])
 BC_full[BC_cases,]$status="case"
-BC_ttest<-BC_full[-c(1:11)]
+BC_ttest <- BC_full[-c(1:11)]
  
 #Get sum of variants per individual
-BC_case_table<-subset(BC_ttest, status=="case")
-BC_case_table$ind_sum<-rowSums(BC_case_table=="2"|BC_case_table=="1",na.rm=T)
-BC_control_table<-subset(BC_ttest, status=="control")
-BC_control_table$ind_sum<-rowSums(BC_case_table=="2"|BC_case_table=="1",na.rm=T)
+BC_case_table <- subset(BC_ttest, status == "case")
+BC_case_table$ind_sum <- rowSums(BC_case_table == "2" | BC_case_table == "1", na.rm = T)
+BC_control_table <- subset(BC_ttest, status=="control")
+BC_control_table$ind_sum <- rowSums(BC_case_table == "2" | BC_case_table == "1", na.rm = T)
 
 #t.test between cases and controls (sum of variants per individual):
-case<-BC_case_table$ind_sum
-control<-BC_control_table$ind_sum
-ttest<-t.test(case,control)
+case <- BC_case_table$ind_sum
+control <- BC_control_table$ind_sum
+ttest <- t.test(case, control)
 ```
 
 Gene panel from the National Board of Health and Welfare:
@@ -53,21 +53,21 @@ module load bioinfo-tools R_packages
 R
 
 setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/ttest")
-list<-read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/BC_SOCgenes.txt",header=F)
-BC_table <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/BC_variants_status.RData", header=T,stringsAsFactors=F,sep="\t")
-BC_status<-data.frame(BC_table$id,BC_table$status)
+list <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/BC_SOCgenes.txt",header=F)
+BC_table <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/BC_variants_status.RData", header = T, stringsAsFactors = F, sep = "\t")
+BC_status <- data.frame(BC_table$id, BC_table$status)
 
 for (name in list[,1]){
 gene <- read.table(/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/plink_files/genes/paste0(name,"_BC.raw"), header = T, stringsAsFactors = F, sep="")
-gene_table<-merge(gene,BC_status,by.x="FID",by.y="BC_table.id")
-gene_for_test<-gene_table[-c(1:6)]
-gene_case<-subset(gene_for_test,BC_table.status=="case")
-gene_control<-subset(gene_for_test,BC_table.status=="control")
-gene_case$sum_variants<-rowSums(gene_case=="2"|gene_case=="1",na.rm=T)
-gene_control$sum_variants<-rowSums(gene_control=="2"|gene_control=="1",na.rm=T)
-case<-gene_case$sum_variants
-control<-gene_control$sum_variants
-ttest<-t.test(case,control)
+gene_table <- merge(gene, BC_status, by.x = "FID", by.y = "BC_table.id")
+gene_for_test <- gene_table[-c(1:6)]
+gene_case <- subset(gene_for_test, BC_table.status == "case")
+gene_control <- subset(gene_for_test, BC_table.status == "control")
+gene_case$sum_variants <- rowSums(gene_case == "2" | gene_case == "1", na.rm=T)
+gene_control$sum_variants <- rowSums(gene_control == "2" | gene_control == "1", na.rm=T)
+case <- gene_case$sum_variants
+control <- gene_control$sum_variants
+ttest <- t.test(case, control)
 sink(paste0(name,"_SOC_ttest.log"))
 print(ttest)
 sink()
@@ -86,21 +86,21 @@ module load bioinfo-tools R_packages
 R
 
 setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/ttest")
-list<-read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/BC_genes.txt",header=F) #OC_genes for OC analysis
-BC_table <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/BC_variants_status.RData", header=T,stringsAsFactors=F,sep="\t") #OC_variants_status.RData for OC analysis
-BC_status<-data.frame(BC_table$id,BC_table$status)
+list <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/BC_genes.txt", header = F) #OC_genes for OC analysis
+BC_table <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/BC_variants_status.RData", header = T, stringsAsFactors = F, sep = "\t") #OC_variants_status.RData for OC analysis
+BC_status <- data.frame(BC_table$id, BC_table$status)
 
 for (name in list[,1]){
-gene <- read.table(/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/plink_files/genes/paste0(name,"_BC.raw"), header = T, stringsAsFactors = F, sep="")
-gene_table<-merge(gene,BC_status,by.x="FID",by.y="BC_table.id")
-gene_for_test<-gene_table[-c(1:6)]
-gene_case<-subset(gene_for_test,BC_table.status=="case")
-gene_control<-subset(gene_for_test,BC_table.status=="control")
-gene_case$sum_variants<-rowSums(gene_case=="2"|gene_case=="1",na.rm=T)
-gene_control$sum_variants<-rowSums(gene_control=="2"|gene_control=="1",na.rm=T)
+gene <- read.table(/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/plink_files/genes/paste0(name,"_BC.raw"), header = T, stringsAsFactors = F, sep = "")
+gene_table <- merge(gene, BC_status, by.x = "FID", by.y = "BC_table.id")
+gene_for_test <- gene_table[-c(1:6)]
+gene_case <- subset(gene_for_test, BC_table.status == "case")
+gene_control <- subset(gene_for_test, BC_table.status == "control")
+gene_case$sum_variants <- rowSums(gene_case == "2" | gene_case == "1", na.rm = T)
+gene_control$sum_variants <- rowSums(gene_control == "2" | gene_control == "1", na.rm = T)
 case<-gene_case$sum_variants
-control<-gene_control$sum_variants
-ttest<-t.test(case,control)
+control <- gene_control$sum_variants
+ttest <- t.test(case, control)
 sink(paste0(name,"_BC_ttest.log"))
 print(ttest)
 sink()
@@ -117,19 +117,19 @@ module load bioinfo-tools R_packages
 R
 
 setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/tmp")
-list<-read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/BC_variants.txt",header=F)
+list <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Scripts/BC_variants.txt", header = F)
 
 for (name in list[,1]){
-BC_variant<-data.frame(BC_table$FID,BC_table[,name])
-variant_table<-merge(BC_variant,BC_status,by.x="BC_table.FID",by.y="BC_table.id")
-variant_case<-subset(variant_table,BC_table.status=="case")
-variant_control<-subset(variant_table,BC_table.status=="control")
-variant_case$sum_variants<-rowSums(variant_case=="2"|variant_case=="1",na.rm=T)
-variant_control$sum_variants<-rowSums(variant_control=="2"|variant_control=="1",na.rm=T)
-case<-variant_case$sum_variants
-control<-variant_control$sum_variants
-name<-c(name)
-ttest <-data.frame(name, t.test(case,control)$p.value)
+BC_variant <- data.frame(BC_table$FID, BC_table[,name])
+variant_table <- merge(BC_variant, BC_status, by.x = "BC_table.FID", by.y = "BC_table.id")
+variant_case <- subset(variant_table, BC_table.status == "case")
+variant_control <- subset(variant_table, BC_table.status == "control")
+variant_case$sum_variants <- rowSums(variant_case == "2" | variant_case == "1", na.rm = T)
+variant_control$sum_variants <- rowSums(variant_control == "2" | variant_control == "1", na.rm = T)
+case <- variant_case$sum_variants
+control <- variant_control$sum_variants
+name <- c(name)
+ttest <- data.frame(name, t.test(case, control)$p.value)
 sink(paste0(name,"_BC.txt"))
 print(ttest)
 sink()
