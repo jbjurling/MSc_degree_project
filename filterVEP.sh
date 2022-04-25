@@ -1,5 +1,3 @@
-# filterVEP.sh
-
 #!/bin/bash -l
 #
 # Script to filter out variants in genes from genepanel
@@ -9,7 +7,6 @@ do
 chr=$line
 
 path=/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/vep_files
-txtfile=/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation
 
 echo "#! /bin/bash -l" > filterVEP.sc;
 echo "#SBATCH -A sens2017538" >> filterVEP.sc;
