@@ -5,12 +5,11 @@
 
 genotype=/proj/sens2017538/nobackup/UKBB_IMP_DOSAGE_V3_bim_bed
 path=/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer #ovarian_cancer for OC
-out=/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer/PRS_score #ovarian_cancer for OC
 
 module load bioinfo-tools
 module load plink2
 
-cd $out
+cd /proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer/PRS_score #ovarian_cancer for OC
 
 for chr in {1..22}
 
