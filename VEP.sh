@@ -1,5 +1,3 @@
-# VEP.sh
-
 #!/bin/bash -l
 #
 # Script to annotate variants from exome data using VEP. Run on Rackham, internet access needed.
