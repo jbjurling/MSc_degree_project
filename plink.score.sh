@@ -9,7 +9,7 @@ path=/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer #ovaria
 module load bioinfo-tools
 module load plink2
 
-cd /proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer/PRS_score #ovarian_cancer for OC
+cd /proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer/PRS_score || exit 1 #ovarian_cancer for OC
 
 for chr in {1..22}
 
