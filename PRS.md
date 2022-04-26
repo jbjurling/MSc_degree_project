@@ -110,7 +110,7 @@ cat ukb41143.OC.tmp.fam | sed 's/NA/-9/´g > ukb41143.OC.fam
 # Running LDpred2
 Plink files from UKB is separated by chromosome and therefore LDpred2 was computed for each chromosome separately. The combined results were then combined before evaluating the best-fit PRS model. 
 
-The dataset, comprising 263,313 females from the UKB, were split into three cohorts. The validation and testing cohort is used in this analysis. The validation cohort contain approximately 10% of the individuals from the dataset. An additional cohort, intended to be used as LD reference, was also created but due to the time-limit of this project LD references from HapMap3 was instead used.
+The dataset, comprising 263,313 females from the UKB, were split into three cohorts. The validation and testing cohort is used in this analysis. The validation cohort contain approximately 10% of the individuals from the dataset. An additional cohort, intended to be used as LD reference, was also created but due to the time-limit of this project LD references from HapMap3 were used instead.
 
 ``` 
 module load bioinfo-tools R_packages
@@ -136,6 +136,7 @@ save(ind.sample, file = "ldscore_cohort.RData")
 save(ind.val, file = "validation_cohort.RData")
 save(ind.test, file = "test_cohort.RData")
 ```
+
 Plink files containing genotype information from UKB was loaded to R and saved as ".rds" files. Filtering was made so the ".rds" files only contained genotypes from the participants for this study (487,409 individuals) and SNPs present in the GWAS summary statistics files from BCAC and OCAC. The script makeRDS.R was used for this step. 
 
 HapMap3 containing 1,054,330 variants based on 362,320 European individuals of the UK biobank was used to get SNP and LD matrices (see run.ldref.R). Ldpred2-grid was then run using the script beta_grid.R.
@@ -168,17 +169,12 @@ sbatch --job-name=$score.plink --output=$score.out --export=score=$score plink.s
 
 done
 ```
-The output files from allelic scoring with plink was merged to get the sum of scores across all chromosomes for each PRS model. Log files from plink2 were moved to a separate folder before merging the scores.
+
+The output files from allelic scoring with plink was merged to get the sum of scores across all chromosomes for each PRS model. Log files from plink2 were moved to a separate folder before merging the scores. Function "get_folder" from [@Schmytzi](https://github.com/Schmytzi/ldpred-prs-manual/blob/master/merge_scores.R)
 
 ```
 module load bioinfo-tools R_packages
 R
-
-setwd("/castor/project/proj_nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer") #/ovarian_cancer for OC
-
-library(magrittr)
-library(data.table)
-library(dplyr)
 
 setwd("/castor/project/proj_nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer") #/ovarian_cancer for OC
 
@@ -215,54 +211,59 @@ save(output, file="PRS_score_table.RData")
 ```
 
 
-# Identifying and validating best-fit PRS
-To choose the best PRS model used Z-score from logistic regression, AUC and how many cases the 10th decile contained. All statistical analysis were carried out using R/4.1.1
+# Validation of PRS models
+To find the best-fit PRS model used Z-score from logistic regression, AUC and how many cases the 10th decile contained. All analysis were carried out using the validation cohort. 
 
-Logistic regression:
+The script glm_prs.R was used to look at the Z-score for all PRS models. The results were then plotted using ggplot2 to look at the differences between using differen: 
+- h2 estimates
+- proportions of variants that are believed to have an effect
+
 ```
 module load bioinfo-tools R_packages
 R
 
-#Make IID column into rownames so only the models will be looped over
-library(tidyverse)
-setwd("/castor/project/proj_nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer") #/ovarian_cancer for OC
-load("PRS_score_table.RData")
-PRS_score <- output %>% remove_rownames %>% column_to_rownames(var="IID")
+library(ggplot2)
+setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer")
+load("params.RData")
 
-#Load validation cohort and get case/control status variable (y)
-load("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/validation_cohort.RData")
-fam <- read.table("ukb41143.BC.fam", header=F) #ukb41143.OC.fam for OC
-y <- fam[,6]
-#Change case/control status from plink format to R format
-y[y=="1"]<-0
-y[y=="2"]<-1
-y[y=="-9"]<-NA
-
-#See how params variable is loaded in 
-
-params$score <- apply(PRS_score[ind.val, ], 2, function(x) {
-  if (all(is.na(x))) return(NA)
-  #summary(lm(y[ind.val] ~ x))$coef["x", 3]
-  summary(glm(y[ind.val] ~ x, family = "binomial"))$coef["x", 3]
-})
-
-#Test again adding covariates (BMI, year of birth, age at recruitment) to the logisitic regression model.
-cov<- read.table("BC_covariates.txt", header=T, sep=" ",stringsAsFactors=F) #OC_covariates.txt for OC
-
-#OC instead of BC for ovarian cancer analysis
-cov$BC[cov$BC=="1"]<-0
-cov$BC[cov$BC=="2"]<-1
-cov$BC[cov$BC=="-9"]<-NA
-BC<-cov[c("BC")]
-yob<-cov[c("yob")]
-age<-cov[c("age")]
-BMI<-cov[c("BMI")]
-
-params$score_cov <- apply(PRS_score[ind.val, ], 2, function(x) {
-  if (all(is.na(x))) return(NA)
-  #summary(lm(y[ind.val] ~ x))$coef["x", 3]
-  summary(glm(BC[ind.val,] ~ x+yob[ind.val,]+age[ind.val,]+BMI[ind.val,], family = "binomial"))$coef["x", 3]
-})
+plot <- ggplot(params, aes(x = p, y = score, color = as.factor(h2))) +
+  theme_bigstatsr() +
+  geom_point() +
+  geom_line() +
+  scale_x_log10(breaks = 10^(-5:0), minor_breaks = params$p) +
+  facet_wrap(~ sparse, labeller = label_both) +
+  labs(y = "GLM Z-Score", color = "h2") +
+  theme(legend.position = "top", panel.spacing = unit(1, "lines"))
 
 ```
+
+AUC calculations in AUC_prs.R
+
+Proportion of cases in the 10th decentile of the validation set was calculated. To see how variables were loaded check glm_prs.R
+
+```
+tmp <- inner_join(output, fam, by = c("IID" = "V2"))
+data_dec <- subset(tmp, select = -c(IID, V3, V4, V5))
+
+data_dec$V6[data_dec$V6 == "1"] <- 0
+data_dec$V6[data_dec$V6 == "2"] <- 1
+data_dec$V6[data_dec$V6 == "-9"] <- NA
+
+top10 <- {}
+
+for (model in 1:168){
+  scoring <- data.frame(data_dec[,169], data_dec[,170], data_dec[,..model])
+  colnames(scoring) <- c("id", "BC", paste0("model_", model))
+  sub <- scoring[ind.val,]
+  sub$decentile <- dplyr::ntile(sub[,3], 10)
+  top.dec <- subset(sub, decentile == 10)
+  BC_case <- NROW(which((top.dec$BC == 1) == TRUE)) / NROW(top.dec$BC)
+  PRS = c(paste0("model_", model))
+  out <- data.frame(PRS, BC_case)
+  top10 <- rbind(top10, out)
+}
+```
+
+# Evaluation of best-fit PRS
+
 
