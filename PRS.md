@@ -237,7 +237,39 @@ plot <- ggplot(params, aes(x = p, y = score, color = as.factor(h2))) +
 
 ```
 
-AUC calculations in AUC_prs.R
+AUC calculations:
+
+```
+library(pROC)
+
+AUC<-{}
+
+#Change to OC for OC analysis
+for (number in 1:168){
+ model<-glm(BC[ind.val,] ~ PRS_score[,{number}][ind.val], family="binomial")
+ predicted <- predict(model, PRS_score[ind.val,], type="response")
+ auc<-auc(BC[ind.val,],predicted)
+ df<-data.frame(auc)
+ rownames(df)<-c(paste0("model_", {number}))
+ AUC<-rbind(AUC,df)
+}
+
+AUC_cov<-{}
+
+#With covariates
+for (number in 1:168){
+ model<-glm(BC[ind.val,] ~ PRS_score[,{number}][ind.val]+yob[ind.val,]+age[ind.val,]+BMI[ind.val,], family="binomial")
+ predicted <- predict(model, PRS_score[ind.val,], type="response")
+ auc_cov<-auc(BC[ind.val,],predicted)
+ df<-data.frame(auc_cov)
+ rownames(df)<-c(paste0("model_", {number}))
+ AUC_cov<-rbind(AUC_cov,df)
+}
+
+AUC_PRS<-cbind(AUC,AUC_cov)
+
+save(AUC_PRS, file="AUC_PRS_models.RData")
+```
 
 Proportion of cases in the 10th decentile of the validation set was calculated. To see how variables were loaded check glm_prs.R
 
@@ -265,5 +297,38 @@ for (model in 1:168){
 ```
 
 # Evaluation of best-fit PRS
+The best PRS model was evaluated using the test cohort from UKB. 
 
+```
+#load test dataset
+load("/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/test_cohort.RData")
 
+# run logistic regression
+model_eval <- glm(y[ind.test] ~ PRS_score[,135][ind.test], family = "binomial")
+model_eval_cov <- glm(y[ind.test] ~ PRS_score[,135][ind.test] + yob[ind.test,] + age[ind.test,] + BMI[ind.test,], family = "binomial")
+
+# Check AUC for model
+predicted <- predict(model_eval, PRS_score[ind.test,], type = "response")
+predicted_cov <- predict(model_eval_cov, PRS_score[ind.test,], type = "response")
+
+auc <- auc(BC[ind.test,], predicted)
+auc_cov <- auc(BC[ind.test,], predicted_cov)
+
+#OR 
+OR <- odds.ratio(model_eval)
+OR_cov <- odds.ratio(model_eval_cov)
+
+#Proportion cases in 10th decentile
+final_prs <- data.frame(data_dec[,169], data_dec[,170], data_dec[,135])
+colnames(final_prs) <- c("id", "BC", "PRS_score")
+subset.df <- final_prs[ind.test,]
+subset.df$decentile <- dplyr::ntile(subset.df[,3], 10)
+top.decentile <- subset(subset.df, decentile == 10)
+case_proportion <- NROW(which((top.decentile$BC==1)==TRUE)) / NROW(top.decentile$BC)
+
+#OR for 10th decentile 
+ind.dec <- which(subset.df$decentile == 10)
+model_top_dec <- glm(y[ind.dec] ~ PRS_score[,135][ind.dec] + yob[ind.dec,] + age[ind.dec,] + BMI[ind.dec,], family = "binomial")
+OR_top10 <- odds.ratio(model_top_dec)
+
+```
