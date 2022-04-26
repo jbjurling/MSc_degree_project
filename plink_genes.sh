@@ -3,7 +3,7 @@
 # Script to get raw data per gene for ttest in R. 
 # Change BC to OC for ovarian cancer analysis
 
-while read line
+while read -r line
 do
 name=$line
 
@@ -21,7 +21,7 @@ echo "#SBATCH -e /proj/sens2017538/nobackup/Exjobb/Josefin/ErrorAndOut/$name.pli
 echo "module load bioinfo-tools" >> plink_gene.sc;
 echo "module load plink" >> plink_gene.sc;
 
-echo "cd $genes" >> plink_gene.sc;
+echo "cd $genes || exit 1" >> plink_gene.sc;
 echo "plink --bfile $path/BC_variants --extract $name.txt --export A --out ${name}_BC" >> plink_gene.sc;
 
 sbatch plink_gene.sc;
