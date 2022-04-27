@@ -1,11 +1,9 @@
-# plink2vcf.sh
-
 #!/bin/bash -l
 #
 # Script to create vcf files from plink .bim .bed .fam files
 # First step for annotation with VEP
 
-while read line1 line2
+while read -r line1 line2
 do
 first=$line1
 second=$line2
@@ -25,7 +23,7 @@ echo "#SBATCH -e /proj/sens2017538/nobackup/Exjobb/Josefin/ErrorAndOut/$second.p
 echo "module load bioinfo-tools" >> plink2vcf.sc;
 echo "module load plink2" >> plink2vcf.sc;
 
-echo "cd $plinkfiles" >> plink2vcf.sc;
+echo "cd $plinkfiles || exit 1" >> plink2vcf.sc;
 
 echo "plink2 --bed ukb23155_${first}_b0_v1.bed --bim UKBexomeOQFE_$second.bim --fam ukb41143.fam --recode vcf --freq --out $path/UKBBexome_$second" >> plink2vcf.sc;
 

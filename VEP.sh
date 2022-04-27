@@ -1,10 +1,8 @@
-# VEP.sh
-
 #!/bin/bash -l
 #
 # Script to annotate variants from exome data using VEP. Run on Rackham, internet access needed.
 
-while read line
+while read -r line
 do
 chr=$line
 
@@ -23,7 +21,7 @@ echo "#SBATCH -e /proj/snic2021-22-624/nobackup/temp/Josefin/Error/$chr.VEP.erro
 echo "module load bioinfo-tools" >> VEP.sc;
 echo "module load vep" >> VEP.sc;
 
-echo "cd $output" >> VEP.sc;
+echo "cd $output || exit 1" >> VEP.sc;
 
 echo "vep --cache --dir /sw/data/uppnex/vep/99/ -i $path/UKBBexome_$chr.vcf -o UKBBexome_$chr.vep" >> VEP.sc;
 

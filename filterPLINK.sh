@@ -1,10 +1,8 @@
-# filterPLINK.sh
-
 #!/bin/bash -l
 #
 # Script to filter out genotypes for variants in genes from genepanel
 
-while read line1 line2
+while read -r line1 line2
 do 
 first=$line1
 second=$line2
@@ -23,7 +21,7 @@ echo "#SBATCH -e /proj/sens2017538/nobackup/Exjobb/Josefin/ErrorAndOut/$second.f
 echo "module load bioinfo-tools" >> filterPLINK.sc;
 echo "module load plink2" >> filterPLINK.sc;
 
-echo "cd $path" >> filterPLINK.sc;
+echo "cd $path || exit 1" >> filterPLINK.sc;
 
 echo "plink2 --bed $plink/ukb23155_${first}_b0_v1.bed --bim $plink/UKBexomeOQFE_$second.bim --fam $plink/ukb41143.fam --extract $txtfile/BC_variants.vep --keep-females --freq --make-bed --out BC_UKBexome_$second" >> filterPLINK.sc;
 echo "plink2 --bed $plink/ukb23155_${first}_b0_v1.bed --bim $plink/UKBexomeOQFE_$second.bim --fam $plink/ukb41143.fam --extract $txtfile/OC_variants.vep --keep-females --freq --make-bed --out OC_UKBexome_$second" >> filterPLINK.sc;

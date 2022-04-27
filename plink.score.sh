@@ -1,25 +1,24 @@
-#! /bin/bash -l
+#! /bin/bash -l 
 #SBATCH -A sens2017538
-#SBATCH -p core -n 10
+#SBATCH -p core -n 8
 #SBATCH -t 48:00:00
 
+genotype=/proj/sens2017538/nobackup/UKBB_IMP_DOSAGE_V3_bim_bed
+path=/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer #ovarian_cancer for OC
+
 module load bioinfo-tools
-module load plink
+module load plink2
 
-path=/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer #/ovarian_cancer for OC
-genotypes=/proj/sens2017538/nobackup/UKBB_IMP_DOSAGE_V3_bim_bed
-out=/proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer/PRS_score #/ovarian_cancer/PRS_score for OC
-
-cd $out
+cd /proj/sens2017538/nobackup/Exjobb/Josefin/PRS/LDpred2/breast_cancer/PRS_score || exit 1 #ovarian_cancer for OC
 
 for chr in {1..22}
 
 do
 
-plink --bed $genotypes/chr${chr}.bed \
---bim $genotypes/chr${chr}.dedup.bim \
---fam $path/ukb41143.BC.fam \ #/ukb41143.OC.fam for OC
---score $path/beta_grid.score 1 2 ${score} header sum \
---out PRS_score_${chr}_${score}
+plink2 --pgen $genotype/chr${chr}.pgen \
+--psam $path/ukb41143.BC.fam \ #.OC. for OC
+--pvar $genotype/chr${chr}.dedup.bim \
+--score $path/beta_grid.score.a1 1 2 ${score} header cols=+scoresums \
+--out model_${score}_chr${chr}
 
 done

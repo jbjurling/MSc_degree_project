@@ -1,15 +1,12 @@
-# filterVEP.sh
-
 #!/bin/bash -l
 #
 # Script to filter out variants in genes from genepanel
 
-while read line
+while read -r line
 do 
 chr=$line
 
 path=/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/vep_files
-txtfile=/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation
 
 echo "#! /bin/bash -l" > filterVEP.sc;
 echo "#SBATCH -A sens2017538" >> filterVEP.sc;
@@ -18,7 +15,7 @@ echo "#SBATCH -J $chr.filter" >> filterVEP.sc;
 echo "#SBATCH -t 15:00" >> filterVEP.sc;
 echo "#SBATCH -e /proj/sens2017538/nobackup/Exjobb/Josefin/ErrorAndOut/$chr.filter.error" >> filterVEP.sc;
 
-echo "cd $path" >> filterVEP.sc;
+echo "cd $path || exit 1" >> filterVEP.sc;
 
 # Filter out genes associated with breast cancer
 echo "grep \"^#\" UKBBexome_$chr.vep > head_$chr" >> filterVEP.sc;
