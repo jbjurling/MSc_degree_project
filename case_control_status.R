@@ -6,7 +6,7 @@ load("/proj/sens2017538/nobackup/UKBB_41143_Data/All.Phenos.20210212.RData")
 id <- phenos$f.eid
 sex <- phenos$f.31.0.0
 age <- phenos$f.21003.0.0 #age at recruitment
-yob <- phenos$f.34.0.0   #year of birth
+yob <- phenos$f.34.0.0 #year of birth
 
 #Get BC/OC case status and age of diagnosis:
 
