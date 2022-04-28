@@ -23,6 +23,11 @@ jobs:
       - name: Install dependencies
         run: Rscript -e 'install.packages("lintr")'
 
+      - name: Check for style on a file-by-file basis
+        run: Rscript -e 'for (filename in list.files(pattern = "*.R")) { message(filename); lintr::lint(filename) }'
+
       - name: Check for style
-        run: Rscript -e 'lintr::lint_dir(getwd())'
+        run: Rscript -e 'lintr::lint_dir()'
+
+
 
