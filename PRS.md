@@ -57,7 +57,7 @@ OC_final <- subset(OC_gwas, maf >= 0.01)
 write.table(OC_final, file="ovarian_cancer/OC_gwas_summary_maf001.txt", col.names = T, row.names = F, quote = F, sep = ",")
 ```
 
-".fam" files for the UKB participants to include in this study was created that contained case/control status for BC and OC. Disease status was extracted from the UKB phenotype files using ICD10, ICD9 and self-reported illness codes.
+".fam" files for the UKB participants to include in this study was created that contained case/control status for BC and OC. Disease status was extracted from the UKB phenotype file using ICD10, ICD9 and self-reported illness codes.
 
 Breast cancer: ICD10 (C50 - Malignant neoplasm of breast), ICD9 (174 - Malignant neoplasm of female breast), self-reported illness (1002 - Breast cancer).
 
@@ -110,7 +110,7 @@ cat ukb41143.OC.tmp.fam | sed 's/NA/-9/´g > ukb41143.OC.fam
 # Running LDpred2
 Plink files from UKB is separated by chromosome and therefore LDpred2 was computed for each chromosome separately. The combined results were then combined before evaluating the best-fit PRS model. 
 
-The dataset, comprising 263,313 females from the UKB, were split into three cohorts. The validation and testing cohort is used in this analysis. The validation cohort contain approximately 10% of the individuals from the dataset. An additional cohort, intended to be used as LD reference, was also created but due to the time-limit of this project LD references from HapMap3 were used instead.
+The dataset, consisting of 263,313 females from the UKB, were split into three cohorts. The validation and testing cohort is used in this analysis. The validation cohort contain approximately 10% of the individuals from the dataset. An additional cohort, intended to be used as LD reference, was also created but due to the time-limit of this project LD references from HapMap3 were used instead.
 
 ``` 
 module load bioinfo-tools R_packages
@@ -141,7 +141,7 @@ Plink files containing genotype information from UKB was loaded to R and saved a
 
 HapMap3 containing 1,054,330 variants based on 362,320 European individuals of the UK biobank was used to get SNP and LD matrices (see run.ldref.R). Ldpred2-grid was then run using the script beta_grid.R.
 
-The genetic load for each individual was calculated using the --score function in plink/1.90b4.9. This was done for all PRS models produced by LDpred2-grid. The output from beta_grid.R was concatenated with rsID for each variant and the alternate allele for the variant to use this as input for the allelic scoring.
+The genetic load for each individual was calculated using the --score function in plink2. This was done for all PRS models produced by LDpred2-grid. The output from beta_grid.R was concatenated with rsID for each variant and the alternate allele for the variant to use this as input for the allelic scoring.
 
 ```
 module load bioinfo-tools R_packages
@@ -214,7 +214,7 @@ save(output, file="PRS_score_table.RData")
 # Validation of PRS models
 To find the best-fit PRS model used Z-score from logistic regression, AUC and how many cases the 10th decile contained. All analysis were carried out using the validation cohort. 
 
-The script glm_prs.R was used to look at the Z-score for all PRS models. The results were then plotted using ggplot2 to look at the differences between using differen: 
+The script glm_prs.R was used to look at the Z-score for all PRS models. The results were then plotted using ggplot2 to look at the differences between using different: 
 - h2 estimates
 - proportions of variants that are believed to have an effect
 
