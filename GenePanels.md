@@ -1,5 +1,5 @@
 # Investigating gene panels for breast and ovarian cancer
-To investigate potential disease causing variants in genes associated with breast and ovarian cancer, LoF variants were identified in the UKB WES data. Variants within 32 genes for BC (BC_genes.txt) and 25 genes for OC (OC_genes.txt) were annotated. The number of LoF variants were then compared between individuals with BC/OC and controls to to check how good of the current genetical testing is in finding hig-risk individuals. 
+To investigate potential disease causing variants in genes associated with breast and ovarian cancer, LoF variants were identified in the UK biobank (UKB) whole exome sequencing (WES) data. Variants within 32 genes for BC (BC_genes.txt) and 25 genes for OC (OC_genes.txt) were annotated. The number of LoF variants were then compared between individuals with BC/OC and controls to to check how good of the current genetical testing is in detecting females with the disease.
 
 For annotation the Ensembl Variant Effect Predictor version 99 (VEP/99) was used:
 
@@ -12,14 +12,14 @@ The plink files containing WES data for 200K individuals from UKB were converted
 The VEP output files were filtered to only include variants found in genes that have known association with breast and ovarian cancer (filterVEP.sh). The filtered files were then used as input for filtering the WES plink files from UKB to only contain genotypes for these variants (filterPLINK.sh).
 
 # Extracting phenotype information from UKB
-To determine the case/control status for statistical testing, disease status was extracted from phenotype files from UKB. This was done using case_control_status.R 
+To determine the case/control status (to use for statistical testing), disease status was extracted from phenotype files from UKB. This was done using case_control_status.R 
 
-Scripts to extract disease information and age of onset was provided by [@AasaJohanssonUU](https://github.com/AasaJohanssonUU) 
+Scripts to extract disease information (GetDiseasesUKB.R) and age of onset (GetDiseasesUKB_ages.R) was provided by [@AasaJohanssonUU](https://github.com/AasaJohanssonUU) 
 
 # Statistical testing
-To explore if there are significant differences between cases and controls ran two-sample t-test using the t.test function in R/4.1.1. This was done for all variants in the gene panel, variants in gene panel from the Swedish National Board of Healt and Welfare, variants per gene from the full gene panel and each variants separately. 
+To explore if there are significant differences between cases and controls ran two-sample t-test using the t.test function in R/4.1.1. This was done for 1) all variants in the gene panel, 2) variants in gene panel from the Swedish National Board of Healt and Welfare, 3) variants per gene from the full gene panel and 4) each variants separately. 
 
-T-test for full set of variants:
+1) T-test for full set of variants:
 ```
 module load bioinfo-tools R_packages
 R
@@ -47,7 +47,7 @@ control <- BC_control_table$ind_sum
 ttest <- t.test(case, control)
 ```
 
-Gene panel from the National Board of Health and Welfare:
+2) T-test for gene panel from the National Board of Health and Welfare:
 ```
 module load bioinfo-tools R_packages
 R
@@ -79,7 +79,9 @@ cat *SOC_ttest.log > socialstyrelsen_BC_genes.txt
 rm *SOC_ttest.log
 ```
 
-Extractted genotype data per gene using plink_genes.sh and then ran t-test per gene to see if specific genes in the gene panels gave the significant differences between cases and controls.
+Extracted genotype data per gene using plink_genes.sh and then ran t-test per gene to see if specific genes in the gene panels gave the significant differences between cases and controls.
+
+3) T-test for each gene separately.
 
 ```
 module load bioinfo-tools R_packages
@@ -107,7 +109,9 @@ sink()
 }
 ```
 
-T-test per variant. In this step created a temporary directory with output files from the loop. These were then concatenated and moved to the same directory as the rest of the ttest statistics. The temporary files were removed at the end of the test.
+4) T-test per variant. 
+
+In this step created a temporary directory with output files from the loop. These were then concatenated and moved to the same directory as the rest of the t-test statistics. The temporary files were removed at the end of the test.
 
 ```
 cd /proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/
