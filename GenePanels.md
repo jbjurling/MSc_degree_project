@@ -11,6 +11,18 @@ The plink files containing WES data for 200K individuals from UKB were converted
 
 The VEP output files were filtered to only include variants found in genes that have known association with breast and ovarian cancer (filterVEP.sh). The filtered files were then used as input for filtering the WES plink files from UKB to only contain genotypes for these variants (filterPLINK.sh).
 
+To get one combined file with all variants, all chromosome files were concatenated. 
+
+```
+#BREAST CANCER
+ls BC* | grep -v "afreq" | grep -v "log" | tr "." "\t" | cut -f 1 | uniq > BC_file.txt
+plink --merge-list BC_file.txt --freq --export A --out BC_variants
+
+#OVARIAN CANCER
+ls OC* | grep -v "afreq" | grep -v "log" | tr "." "\t" | cut -f 1 | uniq > OC_file.txt
+plink --merge-list OC_file.txt --freq --export A --out OC_variants
+```
+
 # Extracting phenotype information from UKB
 To determine the case/control status (to use for statistical testing), disease status was extracted from phenotype files from UKB. This was done using case_control_status.R 
 
