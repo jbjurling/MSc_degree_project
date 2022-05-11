@@ -314,10 +314,6 @@ predicted_cov <- predict(model_eval_cov, PRS_score[ind.test,], type = "response"
 auc <- auc(BC[ind.test,], predicted)
 auc_cov <- auc(BC[ind.test,], predicted_cov)
 
-#OR 
-OR <- odds.ratio(model_eval)
-OR_cov <- odds.ratio(model_eval_cov)
-
 #Proportion cases in 10th decentile
 final_prs <- data.frame(data_dec[,169], data_dec[,170], data_dec[,135])
 colnames(final_prs) <- c("id", "BC", "PRS_score")
@@ -326,9 +322,18 @@ subset.df$decentile <- dplyr::ntile(subset.df[,3], 10)
 top.decentile <- subset(subset.df, decentile == 10)
 case_proportion <- NROW(which((top.decentile$BC==1)==TRUE)) / NROW(top.decentile$BC)
 
-#OR for 10th decentile 
-ind.dec <- which(subset.df$decentile == 10)
-model_top_dec <- glm(y[ind.dec] ~ PRS_score[,135][ind.dec] + yob[ind.dec,] + age[ind.dec,] + BMI[ind.dec,], family = "binomial")
-OR_top10 <- odds.ratio(model_top_dec)
-
+#OR for 10th decentile compared with lowest decile
+final_prs <- data.frame(data_dec[,169], data_dec[,170], data_dec[,135])
+colnames(final_prs) <- c("id", "BC", "PRS_score") #"OC" for OC
+subset.df <- final_prs[ind.test,]
+subset.df$decentile <- dplyr::ntile(subset.df[,3], 10)
+PRS_score_dec <- subset.df$decentile
+PRS_score_dec[PRS_score_dec=="1"]<-0
+PRS_score_dec[PRS_score_dec=="10"]<-1
+PRS_score_dec[PRS_score_dec=="2"|PRS_score_dec=="3"|PRS_score_dec=="4"|PRS_score_dec=="5"|PRS_score_dec=="6"|PRS_score_dec=="7"|PRS_score_dec=="8"|PRS_score_dec=="9"]<-NA
+model_top_dec <- glm(y[ind.test] ~ PRS_score_dec+yob[ind.test,]+age[ind.test,]+BMI[ind.test,], family = "binomial")
+summary(model_top_dec)
+OR<-exp("estimate_from_glm")
+CI_top<-exp("estimate_from_glm"+0.96*"stdev_from_glm")
+CI_low<-exp("estimate_from_glm"-0.96*"stdev_from_glm")
 ```
