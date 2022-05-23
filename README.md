@@ -3,9 +3,6 @@ Medical Research programme at Uppsala University.
 
 The project was carried out in Åsa Johansson research group at the Department of Immunology, Genetics and Pathology at Uppsala University. 
 
-[![DOI](https://zenodo.org/badge/481224393.svg)](https://zenodo.org/badge/latestdoi/481224393)
-
-
 # Loss of function variants in breast and ovarian cancer
 Identified loss of function (LoF) variants in genes that are investigated in the clinic and which are part of different gene panels. The number of LoF variants were compared between cases and controls to find significant differences between the two groups. 
 
