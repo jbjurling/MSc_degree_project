@@ -1,5 +1,5 @@
 # Investigating gene panels for breast and ovarian cancer
-To investigate potential disease causing variants in genes associated with breast and ovarian cancer, LoF variants were identified in the UK biobank (UKB) whole exome sequencing (WES) data. Variants within 32 genes for BC (BC_genes.txt) and 25 genes for OC (OC_genes.txt) were annotated. The number of LoF variants were then compared between individuals with BC/OC and controls to to check how good of the current genetical testing is in detecting females with the disease.
+To investigate potential disease causing variants in genes associated with breast and ovarian cancer, LoF variants were identified in the UK biobank (UKB) whole exome sequencing (WES) data. Variants within 32 genes for BC (BC_genes.txt) and 25 genes for OC (OC_genes.txt) were annotated. The number of LoF variants were then compared between individuals with BC/OC and controls to to check how good the current genetic testing is in detecting females with disease.
 
 For annotation the Ensembl Variant Effect Predictor version 99 (VEP/99) was used:
 
