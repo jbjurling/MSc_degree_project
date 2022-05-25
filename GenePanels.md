@@ -9,7 +9,7 @@ McLaren W, Gil L, Hunt SE, Riat HS, Ritchie GRS, Thormann A, et al. The Ensembl 
 # Annotation of WES data
 The plink files containing WES data for 200K individuals from UKB were converted to VCF files to be used as input for VEP annotation. Genotype information from the WES data was filtered out in the same step (done to save space in the project directory, not necessary to do). The script plink2vcf.sh was used for this. The variants were then annotated using VEP/99 (see VEP.sh).
 
-The VEP output files were filtered to only include variants found in genes that have known association with breast and ovarian cancer (filterVEP.sh). The filtered files were then used as input for filtering the WES plink files from UKB to only contain genotypes for these variants (filterPLINK.sh).
+The VEP output files were filtered to only include high impact variants and variants found in genes that have known association with breast and ovarian cancer (filterVEP.sh). The filtered files were then used as input for filtering the WES plink files from UKB to only contain genotypes for these variants (filterPLINK.sh).
 
 To get one combined file with all variants, all chromosome files were concatenated. 
 
