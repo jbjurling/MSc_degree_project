@@ -67,12 +67,12 @@ R
 setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/ttest")
 soc <- read.table("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis/BC_socialstyrelsen_genes_indsum.txt", header = T, sep = " ") #OC_socialstyrelsen_genes_indsum.txt for OC analysis
 
-df_case <- subset(soc, BC == 1)
-df_control <- subset(soc, BC == 0)
+df_case <- subset(soc, BC == 1) #OC == for OC analysis
+df_control <- subset(soc, BC == 0) #OC == for OC analysis
 case <- df_case$sum_variants
 control <- df_control$sum_variants
 ttest <- t.test(case, control)
-sink(socialstyrelsen_BC_genes.log)
+sink(socialstyrelsen_BC_genes.log) #_OC_genes.log for OC analysis
 print(ttest)
 sink()
 ```
