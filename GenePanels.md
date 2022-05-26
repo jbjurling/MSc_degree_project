@@ -72,7 +72,7 @@ df_control <- subset(soc, BC == 0) #OC == for OC analysis
 case <- df_case$sum_variants
 control <- df_control$sum_variants
 ttest <- t.test(case, control)
-sink(socialstyrelsen_BC_genes.log) #_OC_genes.log for OC analysis
+sink("socialstyrelsen_BC_genes.log") #_OC_genes.log for OC analysis
 print(ttest)
 sink()
 ```
