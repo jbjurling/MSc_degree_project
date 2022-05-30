@@ -39,7 +39,7 @@ R
 setwd("/proj/sens2017538/nobackup/Exjobb/Josefin/Annotation/R_analysis")
 
 #Load genotype data
-BC_full <- read.table("BC_variants_status.RData") #OC_variants_status.RData for OC
+BC_full <- read.table("BC_variants_status.RData", header=T) #OC_variants_status.RData for OC
 
 #Added column with case/control status and removed first 11 columns to get table to use for two sample t-test.
 BC_full$status <- rep("control", nrow(BC_full))
