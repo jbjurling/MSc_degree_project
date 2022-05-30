@@ -51,7 +51,7 @@ BC_ttest <- BC_full[-c(1:11)]
 BC_case_table <- subset(BC_ttest, status == "case")
 BC_case_table$ind_sum <- rowSums(BC_case_table == "2" | BC_case_table == "1", na.rm = T)
 BC_control_table <- subset(BC_ttest, status=="control")
-BC_control_table$ind_sum <- rowSums(BC_case_table == "2" | BC_case_table == "1", na.rm = T)
+BC_control_table$ind_sum <- rowSums(BC_control_table == "2" | BC_control_table == "1", na.rm = T)
 
 #t.test between cases and controls (sum of variants per individual):
 case <- BC_case_table$ind_sum
